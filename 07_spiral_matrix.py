@@ -59,7 +59,7 @@ For the final jump it is when going up but we already visited the row so we go r
 
 Ok so we need a way to track which indexes where visited before, I am thinking of using a hash table to store the visited indexes
 
-ok so the indexes we want to go through are 
+ok so the indexes we want to go through are
 (0,0), (0,1), (0,2), (1,2), (2,2), (2,1), (2,0), (1,0), (1,1)
 
 row -> col -> reverse row -> reverse col -> row -> col -> reverse row -> reverse col -> row
@@ -76,15 +76,77 @@ for row, line in enumerate(matrix):
             visited_hash[num] = [row, col]
             final_array.append(num)
         if row == 1:
-            
 
+After reviewing a hint I found out that I need to not use a nested matrix but rather loop over m*n
+Then use tuples to specifiy direction (using them as direction vectors) and add the direction I want to go
+I then need to loop through the matrix and for each index decide where will it move next, so I need to extract the row and col
+of the index I am in, how do I do that?
+
+Maybe I have two variables one is the current position initialized to (0, 0) and current direction that should be initialized
+to (0, 1). Then I loop through each element and check against current position to see if I need to change direction or not
+
+So algo goes something like this:
+Init answer_list to empty list
+Init direction set to set of directions for right, down, left, up
+Init current postion to (0,0)
+Init current_direction to set[0]
+Init row num to number of rows
+Init col num to number of cols
+Init size to row num * col num
+
+for the total size of the matrix:
+    If current_position == (0, 0) and value not in answer_list:
+        answer_list.append(value)
+    If current_position[1] == num of cols:
+        current_direction = direction_list[1]
+    If current_position[0] == num of rows:
+        current_direction = direction_list[2]
+    If current_position[1] == 0:
+        current_direction = direction_list[3]
+    If current_direction == (0,1) and we value up is visited:
+        current_direction = direction_list[0]
+    answer_list.append(value)
+    current_position += current_direction
 -------------------------------------------
 """
+
 from harness import run_tests
 
 
 def spiral_order(matrix):
+    answer_list = []
 
+    direction_list = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    current_position = (0, 0)
+    current_direction = direction_list[0]
+
+    row_num = len(matrix)
+    col_num = len(matrix[0])
+    total_size_of_matrix = row_num * col_num
+
+    for i in range(total_size_of_matrix):
+        row = current_position[0]
+        col = current_position[1]
+        value = matrix[row][col]
+        if current_position[1] == col_num - 1:
+            current_direction = direction_list[1]
+        elif current_position[0] == row_num - 1:
+            current_direction = direction_list[2]
+        elif current_position[1] == 0:
+            current_direction = direction_list[3]
+        elif (
+            current_direction == direction_list[3]
+            and matrix[row][col - 1] in answer_list
+        ):
+            current_direction = direction_list[0]
+
+        answer_list.append(value)
+        current_position = (
+            current_position[0] + current_direction[0],
+            current_position[1] + current_direction[1],
+        )
+
+    return answer_list
 
 
 CASES = [
@@ -98,6 +160,11 @@ CASES = [
     (([[1], [2], [3], [4]],), [1, 2, 3, 4]),
     (([[1, 2], [3, 4]],), [1, 2, 4, 3]),
     (([[1, 2], [3, 4], [5, 6]],), [1, 2, 4, 6, 5, 3]),
+    ((([[1], [2], [3], [4], [5]],)), ([1, 2, 3, 4, 5])),
+    (
+        (([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]],)),
+        ([1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]),
+    ),
 ]
 
 if __name__ == "__main__":
