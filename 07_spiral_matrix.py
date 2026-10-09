@@ -115,36 +115,31 @@ from harness import run_tests
 
 def spiral_order(matrix):
     answer_list = []
-
+    visited = set()
     direction_list = [(0, 1), (1, 0), (0, -1), (-1, 0)]
-    current_position = (0, 0)
-    current_direction = direction_list[0]
+    dir_idx = 0
 
+    matrix_size = len(matrix) * len(matrix[0])
     row_num = len(matrix)
     col_num = len(matrix[0])
-    total_size_of_matrix = row_num * col_num
 
-    for i in range(total_size_of_matrix):
-        row = current_position[0]
-        col = current_position[1]
-        value = matrix[row][col]
-        if current_position[1] == col_num - 1:
-            current_direction = direction_list[1]
-        elif current_position[0] == row_num - 1:
-            current_direction = direction_list[2]
-        elif current_position[1] == 0:
-            current_direction = direction_list[3]
-        elif (
-            current_direction == direction_list[3]
-            and matrix[row][col - 1] in answer_list
-        ):
-            current_direction = direction_list[0]
+    r = 0
+    c = 0
 
-        answer_list.append(value)
-        current_position = (
-            current_position[0] + current_direction[0],
-            current_position[1] + current_direction[1],
-        )
+    for i in range(matrix_size):
+        dr, dc = direction_list[dir_idx]
+
+        answer_list.append(matrix[r][c])
+        visited.add((r, c))
+
+        nr, nc = r + dr, c + dc
+
+        if not (0 <= nr < row_num and 0 <= nc < col_num) or (nr, nc) in visited:
+            dir_idx = (dir_idx + 1) % 4
+            dr, dc = direction_list[dir_idx]
+            nr, nc = r + dr, c + dc
+
+        r, c = nr, nc
 
     return answer_list
 
