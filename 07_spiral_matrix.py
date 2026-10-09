@@ -107,6 +107,8 @@ for the total size of the matrix:
         current_direction = direction_list[0]
     answer_list.append(value)
     current_position += current_direction
+
+O(m·n) time, since each cell is visited once and set lookups are constant time. O(m·n) extra space for visited
 -------------------------------------------
 """
 
