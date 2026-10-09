@@ -114,34 +114,37 @@ from harness import run_tests
 
 
 def spiral_order(matrix):
-    answer_list = []
-    visited = set()
-    direction_list = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    answ_list = []
+    visited_set = set()
+    dir_list = [(0, 1), (1, 0), (0, -1), (-1, 0)]
     dir_idx = 0
 
-    matrix_size = len(matrix) * len(matrix[0])
+    curr_row = 0
+    curr_col = 0
+
     row_num = len(matrix)
     col_num = len(matrix[0])
+    size_of_matrix = row_num * col_num
 
-    r = 0
-    c = 0
+    for i in range(size_of_matrix):
+        dir_r, dir_c = dir_list[dir_idx]
 
-    for i in range(matrix_size):
-        dr, dc = direction_list[dir_idx]
+        answ_list.append(matrix[curr_row][curr_col])
+        visited_set.add((curr_row, curr_col))
 
-        answer_list.append(matrix[r][c])
-        visited.add((r, c))
+        next_r, next_c = curr_row + dir_r, curr_col + dir_c
 
-        nr, nc = r + dr, c + dc
-
-        if not (0 <= nr < row_num and 0 <= nc < col_num) or (nr, nc) in visited:
+        if (
+            not (0 <= next_r < row_num and 0 <= next_c < col_num)
+            or (next_r, next_c) in visited_set
+        ):
             dir_idx = (dir_idx + 1) % 4
-            dr, dc = direction_list[dir_idx]
-            nr, nc = r + dr, c + dc
+            dir_r, dir_c = dir_list[dir_idx]
+            next_r, next_c = curr_row + dir_r, curr_col + dir_c
 
-        r, c = nr, nc
+        curr_row, curr_col = next_r, next_c
 
-    return answer_list
+    return answ_list
 
 
 CASES = [
